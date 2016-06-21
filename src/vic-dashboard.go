@@ -19,6 +19,7 @@ import (
     "fmt"
     "io"
     "os"
+    "sort"
     "github.com/google/go-github/github"
     "golang.org/x/oauth2"
 )
@@ -44,7 +45,7 @@ func getAllIssues( user, repo *string,
 
     ilo := new(github.IssueListByRepoOptions)
     ilo.State = "all"
-    ilo.PerPage = 1000
+    ilo.PerPage = 100
     ilo.Page = 1
     iss, _, err := client.Issues.ListByRepo( *user, *repo, ilo )
     if err != nil {
@@ -69,7 +70,13 @@ func getAllIssues( user, repo *string,
 // Print all issues
 //
 func printAllIssues( issues map[int]github.Issue ) {
-    for i := range issues {
+    keys := []int{}
+    for k, _ := range issues {
+        keys = append( keys, k )
+    }
+    sort.Ints(keys)
+
+    for _, i := range keys {
         iss := issues[i]
         fmt.Print( "Issue # ", *iss.Number, "(", *iss.State, ") Assigned to: " )
         if iss.Assignee == nil {
@@ -86,8 +93,9 @@ func printAllIssues( issues map[int]github.Issue ) {
             fmt.Println( *iss.ClosedAt )
         } else {
             fmt.Println( "<open>" )
-        }
+        } 
     }
+    fmt.Println("")
 }
 
 func main() {
