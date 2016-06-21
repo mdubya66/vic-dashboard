@@ -22,6 +22,7 @@ import (
     "sort"
     "github.com/google/go-github/github"
     "golang.org/x/oauth2"
+    "net/html"
 )
 
 type TokenSource struct {
@@ -153,22 +154,4 @@ func main() {
 
     printAllIssues( issues )
 
-    issues2 := []github.Issue{}
-    for _, iss := range issues {
-        for _, label := range iss.Labels {
-            if *label.Name == "kind/bug" {
-                issues2 = append( issues2, iss )
-            }
-        }
-    }
-
-    fmt.Println( len(issues2), " bugs reported" )
-/*
-    e, err := json.MarshalIndent( issues2, "", "  ")
-    if err != nil {
-        panic( err )
-    }
-
-    fmt.Printf( "Issue Detail: \n%s\n", string(e) )
-*/
 }
